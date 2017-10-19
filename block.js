@@ -90,20 +90,23 @@ function answer(id)
     opt.path = `/api/v4/answers/${id}/voters?include=data[*].is_following`
 
     // 发起请求
-    https.get(opt, callback(content =>
+    https.get(opt, callback(function (content) // 不用箭头函数以确保argements.callee是此函数
     {
         // 将这些人加入目标名单中
         for (let x of content.data) {
             // 先取关，后拉黑
             if (x.is_following)
                 user('unfollow', x.url_token)
-            blist.push(x.url_token)
+            // 匿名用户没有url_token
+            if (x.url_token)
+                blist.push(x.url_token)
         }
         
         if (!content.paging.is_end) {
             // 获取下一批点赞者
             opt.path = content.paging.next
-            https.get(opt, callback)
+            // 指定自身作为回调函数
+            https.get(opt, callback(arguments.callee))
         } else {
             // 获取完毕，开始拉黑
             for (let x of blist)
