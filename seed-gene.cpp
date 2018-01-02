@@ -14,7 +14,7 @@ int main()
 	string dst = "";
 	srand((unsigned)time(nullptr));
 
-	for (size_t i = 0; i <= MAX_CHAR; ++i)
+	for (size_t i = 0; i < MAX_CHAR; ++i)
 		dst += src[rand() % src.size()];
 	
 	FILE* fd = fopen("seed.txt", "w");
